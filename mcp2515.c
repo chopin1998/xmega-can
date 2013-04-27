@@ -248,22 +248,22 @@ void mcp2515_load_tx_buf(mcp2515_tx_t channel, mcp2515_can_frame_t *frame)
     MCP2515_CS_HI();
 }
 
-void mcp2515_rtx(mcp2515_tx_t channel)
+void mcp2515_rts(mcp2515_tx_t channel)
 {
     MCP2515_CS_LOW();
 
     switch (channel)
     {
     case MCP2515_TX_0:
-        mcp2515_writeread(MCP2515_RTX_TXB0, NULL);
+        mcp2515_writeread(MCP2515_RTS_TXB0, NULL);
 
         break;
     case MCP2515_TX_1:
-        mcp2515_writeread(MCP2515_RTX_TXB1, NULL);
+        mcp2515_writeread(MCP2515_RTS_TXB1, NULL);
 
         break;
     case MCP2515_TX_2:
-        mcp2515_writeread(MCP2515_RTX_TXB2, NULL);
+        mcp2515_writeread(MCP2515_RTS_TXB2, NULL);
         
         break;
     default:
@@ -275,22 +275,12 @@ void mcp2515_rtx(mcp2515_tx_t channel)
 
 void mcp2515_read_rxtx_status(unsigned char *result)
 {
-    MCP2515_CS_LOW();
-
-    mcp2515_writeread(MCP2515_READ_RXTX_STATUS, NULL);
-    mcp2515_writeread(0x00, result);
-
-    MCP2515_CS_HI();
+    read(MCP2515_READ_RXTX_STATUS, result);
 }
 
 void mcp2515_rx_status(unsigned char *result)
 {
-    MCP2515_CS_LOW();
-
-    mcp2515_writeread(MCP2515_READ_RXTX_STATUS, NULL);
-    mcp2515_writeread(0x00, result);
-
-    MCP2515_CS_HI();
+    read(MCP2515_READ_RXTX_STATUS, result)
 }
 
 void mcp2515_set_rx_filter_mask(mcp2515_rx_filter_mask_t reg, unsigned long id)
@@ -298,8 +288,8 @@ void mcp2515_set_rx_filter_mask(mcp2515_rx_filter_mask_t reg, unsigned long id)
     MCP2515_CS_LOW();
 
     mcp2515_writeread(MCP2515_WRITE, NULL);
-    mcp2515_writeread(MCP2515_CANINTF, NULL);
-    mcp2515_writeread(0x00, NULL);
+    mcp2515_writeread(reg, NULL);
+    id_write(id);
     
     MCP2515_CS_HI();
 }
@@ -358,7 +348,7 @@ int mcp2515_set_baudrate(unsigned long ulBaudrate, unsigned long ulMCP2515Clk,
         }
     }
 
-    MCB2515_CS_LOW();
+    MCP2515_CS_LOW();
     
     //Select the MCP2515 on the SPI bus
     mcp2515_writeread(MCP2515_WRITE, NULL);
@@ -382,27 +372,15 @@ int mcp2515_set_baudrate(unsigned long ulBaudrate, unsigned long ulMCP2515Clk,
 int mcp2515_get_int_flag(void)
 {
     unsigned char rev;
-    
-    MCP2515_CS_LOW();
 
-    mcp2515_writeread(MCP2515_READ, NULL);
-    mcp2515_writeread(MCP2515_CANINTF, NULL);
-    mcp2515_writeread(0, &rev);
-    
-    MCP2515_CS_HI();
+    read(MCP2515_CANINTF, &rev);    
 
     return (int)rev;
 }
 
 void mcp2515_clear_interrupt(void)
 {
-    MCP2515_CS_LOW();
-
-    mcp2515_writeread(MCP2515_WRITE, NULL);
-    mcp2515_writeread(MCP2515_CANINTF, NULL);
-    mcp2515_writeread(0x00, NULL);
-    
-    MCP2515_CS_HI();
+    write(MCP2515_CANINTF, 0x00);
 }
 
 void mcp2515_enable_rx_int(mcp2515_rx_t channel)

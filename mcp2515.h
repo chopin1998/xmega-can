@@ -79,11 +79,11 @@ void mcp2515_reset(void);
 void mcp2515_read_rx_buf(mcp2515_rx_t channel, mcp2515_can_frame_t *frame);
 void mcp2515_load_tx_buf(mcp2515_tx_t channel, mcp2515_can_frame_t *frame);
 
-void mcp2515_rtx(mcp2515_tx_t channel);
+void mcp2515_rts(mcp2515_tx_t channel);
 void mcp2515_read_txrx_status(unsigned char *result);
 void mcp2515_rx_status(unsigned char *result);
 
-void mcp2515_set_rx_filter_mask(mcp2515_rx_filter_mask_t reg, long id);
+void mcp2515_set_rx_filter_mask(mcp2515_rx_filter_mask_t reg, unsigned long id);
 void mcp2515_set_op_mode(mcp2515_op_mode_t mode);
 void mcp2515_set_rx_op_mode(mcp2515_rx_t channel, mcp2515_rx_op_mode_t mode);
 int mcp2515_set_baudrate(unsigned long ulBaudrate, unsigned long ulMCP2515Clk,
