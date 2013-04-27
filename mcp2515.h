@@ -34,7 +34,7 @@ void mcp2515_init(void);
 typedef struct mcp2515_can_frame_s {
     unsigned long id;           /* standard or extented ID */
     unsigned char data[8];      /* data, up to 8bytes */
-    unsigned char dlc;          /* len of data */
+    unsigned char len;          /* len of data */
 } mcp2515_can_frame_t;
 
 typedef enum mcp2515_rx_e {
@@ -86,15 +86,13 @@ void mcp2515_rx_status(unsigned char *result);
 void mcp2515_set_rx_filter_mask(mcp2515_rx_filter_mask_t reg, long id);
 void mcp2515_set_op_mode(mcp2515_op_mode_t mode);
 void mcp2515_set_rx_op_mode(mcp2515_rx_t channel, mcp2515_rx_op_mode_t mode);
+int mcp2515_set_baudrate(unsigned long ulBaudrate, unsigned long ulMCP2515Clk,
+                         unsigned char ubSamplingTime, unsigned char ubTsjw);
 
 int mcp2515_get_int_flag(void);
 void mcp2515_clear_interrupt(void);
 void mcp2515_enable_rx_int(mcp2515_rx_t channel);
 void mcp2515_enable_tx_int(mcp2515_tx_t channel);
-
-int mcp2515_set_baudrate(unsigned long ulBaudrate, unsigned long ulMCP2515Clk,
-                         unsigned char ubSamplingTime, unsigned char ubTsjw);
-
 
 
 
