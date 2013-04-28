@@ -16,6 +16,8 @@ ISR (RTC_OVF_vect)
             rtc_handler[i]();
         }
     }
+
+    LED_PORT.OUTTGL = LED_1;
 }
 
 void clock_pll_init(void)
@@ -44,7 +46,7 @@ void clock_rtc_init(void)
     CLK.RTCCTRL = CLK_RTCEN_bm | CLK_RTCSRC_TOSC_gc;
     loop_until_bit_is_clear(RTC.STATUS, WDT_SYNCBUSY_bp);
     
-    RTC.PER = (16 - 1);
+    RTC.PER = (512 - 1);         /* 16 */
     RTC.CNT = 0;
     RTC.CTRL = RTC_PRESCALER_DIV1_gc;
 

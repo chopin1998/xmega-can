@@ -74,6 +74,13 @@ typedef enum mcp2515_rx_filter_mask_e {
     MCP2515_RX_FILTER_MASK_RXM1 = 0x24
 } mcp2515_rx_filter_mask_t;
 
+
+
+void mcp2515_read(unsigned char reg, unsigned char *data);
+void mcp2515_read_burst(unsigned char reg, unsigned char *buf, unsigned char size);
+void mcp2515_write(unsigned char reg, unsigned char data);
+void mcp2515_write_burst(unsigned char reg, unsigned char *buf, unsigned char size);
+
 void mcp2515_reset(void);
 
 void mcp2515_read_rx_buf(mcp2515_rx_t channel, mcp2515_can_frame_t *frame);

@@ -42,10 +42,36 @@ void cmd_process(unsigned char *cmd_buf)
         {
             printf("compiled @ %s\n", __DATE__ "," __TIME__);
         }
+        else if ( !strcmp(para_head->para, "read") )
+        {
+            if (p_count != 2)
+            {
+                printf("read [reg_addr]\n");
+                break;
+            }
+
+            unsigned char addr = decode_hexbyte(para_head->next->para);
+            unsigned char val;
+            mcp2515_read(addr, &val);
+            printf("reg: 0x%02x -> 0x%02x\n", addr, val);
+        }
+        else if ( !strcmp(para_head->para, "write") )
+        {
+            if (p_count != 3)
+            {
+                printf("write [reg_addr] [value]\n");
+                break;
+            }
+
+            unsigned char addr = decode_hexbyte(para_head->next->para);
+            unsigned char val = decode_hexbyte(para_head->next->next->para);
+            mcp2515_write(addr, val);
+            printf("set reg: 0x%02x -> 0x%02x\n", addr, val);
+        }
         else if ( !strcmp(para_head->para, "trig") )
         {
             printf("led trigged\n");
-            LED_PORT.OUTTGL = 0xff;
+            LED_PORT.OUTTGL = LED_2;
         }
         else
         {
