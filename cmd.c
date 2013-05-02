@@ -41,6 +41,14 @@ void cmd_process(unsigned char *cmd_buf)
         if ( !strcmp(para_head->para, "hi") )
         {
             printf("compiled @ %s\n", __DATE__ "," __TIME__);
+            if (MODE_PORT.IN & MODE_PIN)
+            {
+                printf("tx mode\n");
+            }
+            else
+            {
+                printf("rx mode\n");
+            }
         }
         else if ( !strcmp(para_head->para, "read") )
         {

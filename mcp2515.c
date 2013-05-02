@@ -58,15 +58,18 @@ void mcp2515_init(void)
     printf("    spi ok\n");
 
     mcp2515_reset();
-    printf("    force reset\n");
+    printf("    software reset\n");
 
+    _delay_ms(10);
+    
     mcp2515_set_baudrate(500000, 8000000, 75, 4);
     printf("    baudrate: %d\n", rev);
 
     mcp2515_set_rx_op_mode(MCP2515_RX_0, MCP2515_RX_OP_MODE_ANY);
     printf("    recv all packet on rx0\n");
 
-    mcp2515_set_op_mode(MCP2515_OP_MODE_NORMAL);
+    // mcp2515_set_op_mode(MCP2515_OP_MODE_NORMAL);
+    mcp2515_set_op_mode(MCP2515_OP_MODE_LOOPBACK);
     printf("    set op mode\n");
 
     printf("\n\n");

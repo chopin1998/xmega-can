@@ -46,7 +46,7 @@ void clock_rtc_init(void)
     CLK.RTCCTRL = CLK_RTCEN_bm | CLK_RTCSRC_TOSC_gc;
     loop_until_bit_is_clear(RTC.STATUS, WDT_SYNCBUSY_bp);
     
-    RTC.PER = (512 - 1);         /* 16 */
+    RTC.PER = (128 - 1);         /* 16 */
     RTC.CNT = 0;
     RTC.CTRL = RTC_PRESCALER_DIV1_gc;
 
