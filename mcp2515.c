@@ -9,7 +9,7 @@
 
 static void mcp2515_io_init(void);
 static void mcp2515_spi_init(void);
-static void bit_modify(unsigned char reg, unsigned char mask, unsigned char val);
+void bit_modify(unsigned char reg, unsigned char mask, unsigned char val);
 
 
 ISR (MCP2515_vect)
@@ -17,7 +17,7 @@ ISR (MCP2515_vect)
 }
 
 
-static void spi_writeread(unsigned char in, unsigned char *out)
+void spi_writeread(unsigned char in, unsigned char *out)
 {
     MCP2515_SPI.DATA = in;
     loop_until_bit_is_set(MCP2515_SPI.STATUS, SPI_IF_bp);
@@ -35,14 +35,14 @@ void mcp2515_io_init(void)
     MCP2515_PORT.INT0MASK = MCP2515_INT_PIN;
     MCP2515_PORT.INTCTRL = PORT_INT0LVL_HI_gc;
     MCP2515_PORT.INTFLAGS = 0x00;
-
+    
     MCP2515_CS_HI();
 }
 
 void mcp2515_spi_init(void)
 {
     MCP2515_SPI.CTRL = SPI_ENABLE_bm | SPI_MASTER_bm |
-        SPI_MODE_0_gc | SPI_PRESCALER_DIV4_gc;
+        SPI_MODE_0_gc | SPI_PRESCALER_DIV16_gc /*| SPI_CLK2X_bm */;
 }
 
 void mcp2515_init(void)
@@ -68,8 +68,8 @@ void mcp2515_init(void)
     mcp2515_set_rx_op_mode(MCP2515_RX_0, MCP2515_RX_OP_MODE_ANY);
     printf("    recv all packet on rx0\n");
 
-    // mcp2515_set_op_mode(MCP2515_OP_MODE_NORMAL);
-    mcp2515_set_op_mode(MCP2515_OP_MODE_LOOPBACK);
+    mcp2515_set_op_mode(MCP2515_OP_MODE_NORMAL);
+    // mcp2515_set_op_mode(MCP2515_OP_MODE_LOOPBACK);
     printf("    set op mode\n");
 
     printf("\n\n");
@@ -189,7 +189,7 @@ void mcp2515_write_burst(unsigned char reg, unsigned char *buf, unsigned char si
 /*
  * mcp2515 bit modify function
  */
-static void bit_modify(unsigned char reg, unsigned char mask, unsigned char val)
+void bit_modify(unsigned char reg, unsigned char mask, unsigned char val)
 {
     MCP2515_CS_LOW();
 
@@ -387,10 +387,9 @@ int mcp2515_set_baudrate(unsigned long ulBaudrate, unsigned long ulMCP2515Clk,
     MCP2515_CS_HI();
     */
 
-    mcp2515_write(MCP2515_CNF3, 0x83);
-    mcp2515_write(MCP2515_CNF2, 0x88);
-    mcp2515_write(MCP2515_CNF1, 0x00);
-    
+    mcp2515_write(MCP2515_CNF3, 0x01);
+    mcp2515_write(MCP2515_CNF2, 0xac);
+    mcp2515_write(MCP2515_CNF1, 0x03);
 
     if (ubDivider == (ubBRP) * (ubTprs + ubTphs1 + ubTphs2 + 1))
     {

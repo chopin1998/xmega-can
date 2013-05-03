@@ -4,6 +4,7 @@
 #include "util.h"
 
 #include "io.h"
+#include "mcp2515.h"
 
 void cmd_process(unsigned char *cmd_buf)
 {
@@ -80,6 +81,26 @@ void cmd_process(unsigned char *cmd_buf)
         {
             printf("led trigged\n");
             LED_PORT.OUTTGL = LED_2;
+        }
+        else if ( !strcmp(para_head->para, "test") )
+        {
+            for (unsigned char i=0; i<3; i++)
+            {
+                mcp2515_can_frame_t frame;
+                unsigned char reg;
+
+                frame.id = 0x04500000UL;
+                snprintf(frame.data, 8, "abcdefg");
+                frame.len = 7;
+                mcp2515_load_tx_buf(MCP2515_TX_0, &frame);
+
+                for (unsigned char i=0x31; i<0x31+5; i++)
+                {
+                    mcp2515_read(i, &reg);
+                    printf("0x%02x -> 0x%02x\n", i, reg);
+                }
+                printf("\n\n");
+            }
         }
         else
         {

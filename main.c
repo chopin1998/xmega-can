@@ -25,10 +25,13 @@ void test_send_can_frame(void)
 {
     static unsigned char count = 0;    
     mcp2515_can_frame_t frame;
-    
-    frame.id = 0x2aa;
-    snprintf(frame.data, 8, "c:%d", count++);
+
+    // mcp2515_clear_interrupt();
+    frame.id = 0x04500000UL;
+    snprintf(frame.data, 8, "c: %d", count++);
     frame.len = strlen(frame.data);
+
+    bit_modify(MCP2515_TXB0CTRL, 0x80, 0x00);
     mcp2515_load_tx_buf(MCP2515_TX_0, &frame);
 
     mcp2515_rts(MCP2515_TX_0);
@@ -46,12 +49,13 @@ void test_recv_can_frame(void)
         mcp2515_read_rx_buf(MCP2515_RX_0, &frame);
         mcp2515_clear_interrupt();
 
-        printf("    id: 0x%011x\n-->", frame.id);
+        printf("    id: 0x%011x -->", frame.id);
         for(unsigned char i=0; i<frame.len; i++)
         {
             printf("%c", frame.data[i]);
         }
-        printf("<--\n");
+        printf("<--\n\n");
+        LED_PORT.OUTTGL = LED_2;
     }
     else if (flag)
     {
@@ -78,6 +82,8 @@ int main(void)
     {
         mode = 1;
         printf("tx mode\n");
+
+        bit_modify(MCP2515_CANCTRL, 0x08, 0x08);
     }
     else
     {
@@ -87,19 +93,27 @@ int main(void)
     
     for (;;)
     {
-        if (rtc_flag==9)
+        if (1)
         {
-            rtc_flag = 0;
-            LED_PORT.OUTTGL = LED_2;
-
             if (mode == 1)
             {
-                test_send_can_frame();
+                if (rtc_flag == 11)
+                {
+                    rtc_flag = 0;
+
+                    test_send_can_frame();
+                }
+
+                test_recv_can_frame();
             }
+            else
+            {
+                test_recv_can_frame();
+            }
+
         }
 
-        test_recv_can_frame();
-        
+
         if (1)
         {
             uart_process_tick();
